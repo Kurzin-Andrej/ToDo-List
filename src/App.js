@@ -1,96 +1,72 @@
-import React from "react"
-import TodoItem from "./TodoItem";
+import React from "react";
+import {useState} from "react";
 
 
-class App extends React.Component{
-  constructor(){
-    super()
-    this.state = {
-      items: [], 
-      text: ''
-    }
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-  /*chekChange(id){
-    this.setState(prevState => {
-      const updateTodos = prevState.todos.map(todo => {
-        if (todo.id === id) {
-          todo.completed = !todo.completed
-        }
-        return todo
-      })
-      return {
-        todos :updateTodos
-      }
-    })
-  }*/
-
-  render(){
-    return (
-        <div className="todo-list">
-          <h1>Список дел</h1>        
-          <form onSubmit={this.handleSubmit}>          
-            <input onChange={this.handleChange} value={this.state.text}/>
-            <button> Добавить</button>          
-          </form>
-          <TodoItem items = {this.state.items} />
-        </div>
-    )
-  }
-
-
-  handleChange(e) {
-    this.setState({ text: e.target.value });
-  }
-
-  handleSubmit(e) {
-    e.preventDefault();
-    if (!this.state.text) {
-      return;
-    }
-    let newItem = {
-      text: this.state.text,  
-     };
-    
-    this.setState(state => ({
-      items: state.items.concat(newItem),
-      text: ''
-      
-    }));
-  }
+let keys = 0;
+if(localStorage.lenght!==0){
+  keys = localStorage.length;
 }
 
 
-
-/*
 function App(){
+  let [arr, setArr] = useState([]);
+ /* if(localStorage.length!==0){
+    for(let i = 0; i<localStorage.length; i++){
+      setArr([...arr, localStorage.getItem(i)])
+    }
+  }*/
+  let [value, setValue] = useState('');
 
-  const [arr, setArr] = useState([' ']);
-  const [value, setValue] = useState('');
-
-  const result = arr.map((element, index) => {
-    return  <p key={index}>{element}</p>;
-  });
+  
+  
 
   function add(){
+    if(!value){
+      return;
+    }
     setArr([...arr, value]);
-
+    localStorage.setItem(keys, value); 
+    keys++;
   }
+   
 
   function inputValue(event){
     setValue(event.target.value);
   }
+  
+  /*for(let i = 0; i < localStorage.length; i++){
+    console.log(localStorage.getItem(i))
+  }
+*/
+
+  function remove(){
+    //arr.splice(0, 1)
+    let elem = document.getElementById("pic");
+    elem.remove()
+   }
 
   return (
   <div>
      <h1>Список дел</h1>
     <input value={value} onChange={inputValue} />
     <button onClick={add}> Добавить </button>
-    {result}
+    {arr.map((element, index) => {
+      return(
+        <div id="pic" key={index}> 
+          {element}
+          <button className={index} onClick={remove} >Delete</button>
+        </div>
+      )
+    })}
+    
   </div>
- 
   )
+
 }
-*/
+
+
 export default App
+
+
+
+
