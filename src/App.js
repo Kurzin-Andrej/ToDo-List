@@ -2,67 +2,63 @@ import React from "react";
 import {useState} from "react";
 
 
-let keys = 0;
-if(localStorage.lenght!==0){
-  keys = localStorage.length;
+function App(){ 
+  const [todos, setTodos] = useState(() => {
+  const savedTodos = localStorage.getItem("todos");
+  if (savedTodos) {
+    return JSON.parse(savedTodos);
+  } else {
+    return [];
+  }
+});
+const [todo, setTodo] = useState("");
+
+function handleInputChange(e) {
+  setTodo(e.target.value);
 }
 
+function handleFormSubmit(e) {
+  e.preventDefault();
+  if (todo === "") { return }
+  const new_todos = [...todos, todo];
+  setTodos(new_todos);
+  localStorage.setItem("todos", JSON.stringify(new_todos));
+  setTodo("");
+}
 
-function App(){
-  let [arr, setArr] = useState([]);
- /* if(localStorage.length!==0){
-    for(let i = 0; i<localStorage.length; i++){
-      setArr([...arr, localStorage.getItem(i)])
-    }
-  }*/
-  let [value, setValue] = useState('');
+function handleDeleteClick(index) {
+  let remove_todos = todos;
+  remove_todos.splice(index, 1); 
+  setTodos(remove_todos.slice(0));
+  localStorage.setItem("todos", JSON.stringify(remove_todos));
+}
 
-  
-  
-
-  function add(){
-    if(!value){
-      return;
-    }
-    setArr([...arr, value]);
-    localStorage.setItem(keys, value); 
-    keys++;
-  }
-   
-
-  function inputValue(event){
-    setValue(event.target.value);
-  }
-  
-  /*for(let i = 0; i < localStorage.length; i++){
-    console.log(localStorage.getItem(i))
-  }
-*/
-
-  function remove(){
-    //arr.splice(0, 1)
-    let elem = document.getElementById("pic");
-    elem.remove()
-   }
-
-  return (
+return (
   <div>
-     <h1>Список дел</h1>
-    <input value={value} onChange={inputValue} />
-    <button onClick={add}> Добавить </button>
-    {arr.map((element, index) => {
-      return(
-        <div id="pic" key={index}> 
-          {element}
-          <button className={index} onClick={remove} >Delete</button>
-        </div>
-      )
-    })}
+    <div className="head">
+      <h1>Список задач</h1>
+      <form onSubmit={handleFormSubmit}>
+        <input
+          className="input"
+          type="text"
+          placeholder="Введите новую задачу"
+          value={todo}
+          onChange={handleInputChange}
+        />
+        <button className="addBtn" onClick={handleFormSubmit}>Добавить</button>
+      </form>
+    </div>
+    {todos.map((todo, index) => 
+      <div className="list" key={index}>
+        {todo}
+        <button className="far fa-trash-alt" onClick={() => handleDeleteClick(index)}></button>
+      </div>
+    )}
     
   </div>
-  )
-
+);
 }
+
 
 
 export default App
